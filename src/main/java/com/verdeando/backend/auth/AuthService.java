@@ -1,8 +1,11 @@
 package com.verdeando.backend.auth;
 
 import com.verdeando.backend.jwt.JwtService;
+import com.verdeando.backend.model.TipoAccion;
 import com.verdeando.backend.model.Usuario;
 import com.verdeando.backend.repository.IUsuarioRepository;
+import com.verdeando.backend.service.LogService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,11 +22,13 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final LogService logService;
 
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getContrasenia()));
         UserDetails usuario = usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
         String token = jwtService.getToken(usuario);
+        logService.guardarLog((Usuario) usuario, TipoAccion.LOGIN, "Usuario logueado: " + usuario.getUsername());
         return AuthResponse.builder()
                 .token(token)
                 .build();
@@ -31,7 +36,6 @@ public class AuthService {
 
     public AuthResponse registro(RegistroRequest request) {
         Usuario usuario = Usuario.builder()
-                //.id(UUID.randomUUID().toString())
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
                 .email(request.getEmail())
@@ -40,8 +44,12 @@ public class AuthService {
                 .fechaAlta(LocalDateTime.now())
                 .isHabilitado(true)
                 .build();
-            System.out.println(usuario.getUsername()+" "+usuario.getPassword()+" "+usuario.getIsHabilitado());
         usuarioRepository.save(usuario);
+        String detalle = "Usuario registrado: " + usuario.getEmail() +  "," + usuario.getNombre() + ", " + 
+                        usuario.getApellido()+ ", Fecha Nacimiento: " + usuario.getFechaNacimiento()+ ", Fecha Alta: " + usuario.getFechaAlta()+ 
+                        ", Está habilitado?: " + usuario.getIsHabilitado();
+        logService.guardarLog(usuario, TipoAccion.REGISTRO, detalle);
+        
         return AuthResponse.builder()
                 .token(jwtService.getToken(usuario))
                 .build();
