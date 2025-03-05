@@ -34,7 +34,7 @@ public class Usuario implements UserDetails {
     private LocalDate fechaNacimiento;
     @Column(nullable = false)
     private LocalDateTime fechaAlta;
-   @Column(nullable = false)
+    @Column(nullable = false)
     private Boolean isHabilitado;
 
     @Override
