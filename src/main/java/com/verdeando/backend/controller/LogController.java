@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.verdeando.backend.dtos.LogDTO;
 import com.verdeando.backend.model.Log;
 import com.verdeando.backend.model.TipoAccion;
 import com.verdeando.backend.service.LogService;
@@ -22,17 +23,17 @@ public class LogController {
     private LogService logService;
 
     @GetMapping("/logs")
-    public ResponseEntity<List<Log>> listarLogs() {
+    public ResponseEntity<List<LogDTO>> listarLogs() {
         return ResponseEntity.ok(logService.listarLogs());
     }
 
     @GetMapping("/logs/usuario/{idUsuario}")
-    public ResponseEntity<List<Log>> buscarLogsPorUsuario(@PathVariable String idUsuario) {
+    public ResponseEntity<List<LogDTO>> buscarLogsPorUsuario(@PathVariable String idUsuario) {
         return ResponseEntity.ok(logService.buscarLogsPorUsuario(idUsuario));
     }
 
     @GetMapping("/logs/tipoAccion/{tipoAccion}")
-    public ResponseEntity<List<Log>> buscarLogsPorTipoAccion(@PathVariable TipoAccion tipoAccion) {
+    public ResponseEntity<List<LogDTO>> buscarLogsPorTipoAccion(@PathVariable TipoAccion tipoAccion) {
         return ResponseEntity.ok(logService.buscarLogsPorTipoAccion(tipoAccion));
     }
 
