@@ -2,10 +2,13 @@ package com.verdeando.backend.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.verdeando.backend.dtos.LogDTO;
+import com.verdeando.backend.dtos.UsuarioDTO;
 import com.verdeando.backend.model.Log;
 import com.verdeando.backend.model.TipoAccion;
 import com.verdeando.backend.model.Usuario;
@@ -20,8 +23,9 @@ public class LogService {
     @Autowired
     private ILogRepository logRepository;
     
-    public List<Log> listarLogs() {
-        return logRepository.findAll();
+    public List<LogDTO> listarLogs() {
+        List<Log> logs = logRepository.findAll();
+        return logs.stream().map(this::convertirALogDTO).collect(Collectors.toList());
     }
 
     public Log guardarLog(Usuario usuario, TipoAccion tipoAccion, String detalle) {
@@ -34,14 +38,32 @@ public class LogService {
         return logRepository.save(log);
     }
 
-    public List<Log> buscarLogsPorUsuario(String idUsuario) {
-        return logRepository.findByUsuarioId(idUsuario);
+    public List<LogDTO> buscarLogsPorUsuario(String idUsuario) {
+        List<Log> logs =logRepository.findByUsuarioId(idUsuario);
+        return logs.stream().map(this::convertirALogDTO).collect(Collectors.toList());
     }
 
-    public List<Log> buscarLogsPorTipoAccion(TipoAccion tipoAccion) {
-        return logRepository.findByTipoAccion(tipoAccion);
+    public List<LogDTO> buscarLogsPorTipoAccion(TipoAccion tipoAccion) {
+        List<Log> logs = logRepository.findByTipoAccion(tipoAccion);
+        return logs.stream().map(this::convertirALogDTO).collect(Collectors.toList());
     }
 
+    private LogDTO convertirALogDTO(Log log){
+        UsuarioDTO usuarioDTO = UsuarioDTO.builder()
+                .id(log.getUsuario().getId())
+                .nombre(log.getUsuario().getNombre())
+                .apellido(log.getUsuario().getApellido())
+                .email(log.getUsuario().getEmail())
+                .build();
 
+        // Convertir Log a LogDTO
+        return LogDTO.builder()
+                .idLog(log.getIdLog())
+                .tipoAccion(log.getTipoAccion())
+                .usuario(usuarioDTO)
+                .detalle(log.getDetalle())
+                .fechaAccion(log.getFechaAccion().toString())
+                .build();
+    }
 
 }
