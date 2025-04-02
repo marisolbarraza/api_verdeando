@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -28,7 +30,7 @@ public class Usuario implements UserDetails {
     private String apellido;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String contrasenia;
     @Column(nullable = false)
     private LocalDate fechaNacimiento;
@@ -36,6 +38,12 @@ public class Usuario implements UserDetails {
     private LocalDateTime fechaAlta;
     @Column(nullable = false)
     private Boolean isHabilitado;
+    @ElementCollection
+    @CollectionTable(name = "usuario_proveedores", joinColumns = @JoinColumn(name = "usuario_id")) 
+    @MapKeyEnumerated(EnumType.STRING)
+    @MapKeyColumn(name = "proveedor")
+    @Column(name = "id_proveedor")
+    private Map<ProveedorAuth, String> proveedoresAuth = new HashMap<>();   
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

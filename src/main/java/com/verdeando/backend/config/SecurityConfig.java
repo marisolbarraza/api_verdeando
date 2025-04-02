@@ -1,6 +1,10 @@
 package com.verdeando.backend.config;
 
+import com.verdeando.backend.auth.CustomOAuth2UserService;
+import com.verdeando.backend.auth.OAuth2AuthenticationSuccessHandler;
 import com.verdeando.backend.jwt.JwtAuthenticationFilter;
+import com.verdeando.backend.jwt.JwtService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +22,8 @@ public class SecurityConfig {
 
         private final JwtAuthenticationFilter jwtAuthenticationFilter;
         private final AuthenticationProvider authenticationProvider;
+        private final CustomOAuth2UserService oAuth2UserService;
+        private final OAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,7 +39,14 @@ public class SecurityConfig {
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         .authenticationProvider(authenticationProvider)
                         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                        .oauth2Login(oauth2 -> oauth2
+                                .userInfoEndpoint(userInfo -> userInfo
+                                        .userService(oAuth2UserService)
+                                )
+                                .successHandler(oAuth2SuccessHandler)
+                        )
                         .build();
 
         }
+
 }
