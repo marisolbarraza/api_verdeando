@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.verdeando.backend.dtos.LogDTO;
-import com.verdeando.backend.model.Log;
 import com.verdeando.backend.model.TipoAccion;
 import com.verdeando.backend.service.LogService;
 

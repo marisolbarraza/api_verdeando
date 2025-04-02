@@ -3,7 +3,6 @@ package com.verdeando.backend.config;
 import com.verdeando.backend.auth.CustomOAuth2UserService;
 import com.verdeando.backend.auth.OAuth2AuthenticationSuccessHandler;
 import com.verdeando.backend.jwt.JwtAuthenticationFilter;
-import com.verdeando.backend.jwt.JwtService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
